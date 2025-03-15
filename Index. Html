@@ -1,0 +1,62 @@
+<!-- IBW Calculator -->
+<div class="section">
+    <h2>Ideal Body Weight (IBW) Calculator</h2>
+    <div class="input-group">
+        <label for="ibwDob">Date of Birth:</label>
+        <input type="date" id="ibwDob" required>
+    </div>
+    <div class="input-group">
+        <label for="ibwHeight">Height (cm):</label>
+        <input type="number" id="ibwHeight" placeholder="Enter height" min="0" required>
+    </div>
+    <div class="input-group">
+        <label for="ibwGender">Gender:</label>
+        <select id="ibwGender" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+    </div>
+    <button onclick="calculateIBW()">Calculate IBW</button>
+    <div class="result" id="ibwResult"></div>
+</div>
+
+<script>
+    function calculateIBW() {
+        const dob = new Date(document.getElementById('ibwDob').value);
+        const heightCm = parseFloat(document.getElementById('ibwHeight').value);
+        const gender = document.getElementById('ibwGender').value;
+        const today = new Date();
+        
+        if (isNaN(heightCm) || heightCm <= 0) {
+            document.getElementById('ibwResult').textContent = "Please enter a valid height.";
+            return;
+        }
+        if (dob > today) {
+            document.getElementById('ibwResult').textContent = "Date of birth cannot be in the future.";
+            return;
+        }
+        
+        // Calculate age
+        let age = today.getFullYear() - dob.getFullYear();
+        let monthDiff = today.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        if (age < 18) {
+            document.getElementById('ibwResult').textContent = "You must be at least 18 years old.";
+            return;
+        }
+
+        // Convert height from cm to inches
+        const heightInches = heightCm / 2.54;  
+        let ibw = gender === "male"
+            ? 50 + 2.3 * (heightInches - 60)
+            : 45.5 + 2.3 * (heightInches - 60);
+
+        document.getElementById('ibwResult').innerHTML = `
+            <strong>Age:</strong> ${age} years<br>
+            <strong>Ideal Body Weight:</strong> ${ibw.toFixed(2)} kg
+        `;
+    }
+</script>
